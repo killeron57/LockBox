@@ -50,8 +50,6 @@ class LoginFrame(ctk.CTkFrame):
                 self.data = json.load(fichier)
         except FileNotFoundError:
             print("Erreur : Le fichier login.json est introuvable au chemin indiqué.")
-        except json.JSONDecodeError:
-            print("Erreur : Le fichier login.json mal formaté.")
 
     def save_login_data(self):
         try:
@@ -66,26 +64,23 @@ class LoginFrame(ctk.CTkFrame):
         username = self.etr_username.get()
         password = self.etr_password.get()
 
-        self.get_login_data()
-
         if self.data != None and username in self.data:
             if self.data[username] == password:
                 print("Connection validé ! ")
                 self.on_login_success()
             else:
                 self.lbl_error.configure(text="error : Incorrect password !")
-                print("Mot de passe éroné")
-                print(self.data)
         else:
             self.lbl_error.configure(text="error : Unknown user !")
-            print("Nom d'utilisateur éroné")
-            print(self.data)
 
     def sign_up(self):
         username = self.etr_username.get()
         password = self.etr_password.get()
 
-        self.data[username] = password
+        if username in self.data:
+            self.lbl_error.configure(text="error : Existing user !")
+        else:
+            self.data[username] = password
 
-        self.save_login_data()
-        self.on_login_success()
+            self.save_login_data()
+            self.on_login_success()
