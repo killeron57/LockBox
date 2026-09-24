@@ -6,15 +6,22 @@ class App(ctk.CTk):
     def __init__(self):
         super().__init__()
         self.title("LockBox")
-        self.geometry("400x325")
+        self.geometry("1200x800")
 
-        self.mon_panneau = LoginFrame(
-            master=self, on_login_success=self.open_app, border_width=2
+        self.after(0, lambda: self.state("zoomed"))
+
+        self.grid_rowconfigure(0, weight=1)
+        self.grid_columnconfigure((0, 1), weight=1)
+
+        self.login_frame = LoginFrame(
+            master=self,
+            on_login_success=self.open_app,
+            border_width=2,
         )
-        self.mon_panneau.pack(padx=20, pady=20, fill="both", expand=True)
+        self.login_frame.place(relx=0.5, rely=0.5, anchor="center")
 
     def open_app(self):
-        self.mon_panneau.pack_forget()
+        self.login_frame.place_forget()
 
 
 if __name__ == "__main__":

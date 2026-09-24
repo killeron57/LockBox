@@ -13,26 +13,53 @@ class LoginFrame(ctk.CTkFrame):
         self.lbl = ctk.CTkLabel(
             self,
             text="Authentication",
-            font=("Arial", 30, "bold"),
+            font=("Arial", 60, "bold"),
         )
-        self.lbl.pack(padx=20, pady=20)
+        self.lbl.pack(padx=30, pady=(50, 40))
 
         self.etr_username = ctk.CTkEntry(
-            self, placeholder_text="Username", width=250, height=35
+            self,
+            placeholder_text="Username",
+            font=("Arial", 15, "bold"),
+            width=350,
+            height=40,
         )
-        self.etr_username.pack(padx=20, pady=5)
+        self.etr_username.pack(padx=80, pady=5, anchor="w")
         self.etr_password = ctk.CTkEntry(
-            self, placeholder_text="Password", width=250, height=35
+            self,
+            placeholder_text="Password",
+            show="*",
+            font=("Arial", 15, "bold"),
+            width=350,
+            height=40,
         )
-        self.etr_password.pack(padx=20, pady=5)
+        self.etr_password.pack(padx=80, pady=5, anchor="w")
+
+        self.checkbox_show_password = ctk.CTkCheckBox(
+            self,
+            text="Show password",
+            font=("Arial", 15, "bold"),
+            command=self.show_hide_password,
+        )
+        self.checkbox_show_password.pack(padx=80, pady=(10, 10), anchor="w")
 
         self.btn_login = ctk.CTkButton(
-            self, text="Login", font=("Arial", 15, "bold"), command=self.login
+            self,
+            text="Login",
+            font=("Arial", 20, "bold"),
+            command=self.login,
+            width=200,
+            height=40,
         )
-        self.btn_login.pack(padx=25, pady=5)
+        self.btn_login.pack(padx=25, pady=(20, 5))
 
         self.btn_sign_up = ctk.CTkButton(
-            self, text="Sign up", font=("Arial", 15, "bold"), command=self.sign_up
+            self,
+            text="Sign up",
+            font=("Arial", 20, "bold"),
+            command=self.sign_up,
+            width=200,
+            height=40,
         )
         self.btn_sign_up.pack(padx=25, pady=5)
 
@@ -60,9 +87,19 @@ class LoginFrame(ctk.CTkFrame):
         except Exception as e:  # noqa: BLE001
             print("Erreur lors de l'enregistrement des tâches :", e)
 
+    def show_hide_password(self):
+        if self.checkbox_show_password.get() == 1:
+            self.etr_password.configure(show="")
+            self.checkbox_show_password.configure(text="Hide password")
+        else:
+            self.etr_password.configure(show="*")
+            self.checkbox_show_password.configure(text="Show password")
+
     def login(self):
         username = self.etr_username.get()
         password = self.etr_password.get()
+
+        self.get_login_data()
 
         if self.data != None and username in self.data:
             if self.data[username] == password:
