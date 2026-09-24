@@ -25,7 +25,7 @@ class LoginFrame(ctk.CTkFrame):
             width=350,
             height=40,
         )
-        self.etr_username.pack(padx=80, pady=5, anchor="w")
+        self.etr_username.pack(padx=80, pady=5)
         self.etr_password = ctk.CTkEntry(
             self,
             placeholder_text="Password",
@@ -34,7 +34,7 @@ class LoginFrame(ctk.CTkFrame):
             width=350,
             height=40,
         )
-        self.etr_password.pack(padx=80, pady=5, anchor="w")
+        self.etr_password.pack(padx=80, pady=5)
 
         self.checkbox_show_password = ctk.CTkCheckBox(
             self,
@@ -42,7 +42,7 @@ class LoginFrame(ctk.CTkFrame):
             font=("Arial", 15, "bold"),
             command=self.show_hide_password,
         )
-        self.checkbox_show_password.pack(padx=80, pady=(10, 10), anchor="w")
+        self.checkbox_show_password.pack(padx=80, pady=(10, 10))
 
         self.btn_login = ctk.CTkButton(
             self,
@@ -76,7 +76,6 @@ class LoginFrame(ctk.CTkFrame):
         try:
             with open("source/data/last_user.txt", "r", encoding="utf-8") as fichier:
                 self.last_user = fichier.read()
-                print(type(self.last_user), " : ", self.last_user)
         except FileNotFoundError:
             print("Erreur : Le fichier last_user.txt est introuvable.")
 
@@ -94,6 +93,9 @@ class LoginFrame(ctk.CTkFrame):
                 fichier.write(new_user)
         except Exception as e:  # noqa: BLE001
             print("Erreur lors de l'enregistrement du dernier utilisateur :", e)
+
+    def check_username_lenght(self, username):
+        return not len(username) > 25
 
     def get_login_data(self):
         try:
@@ -141,8 +143,13 @@ class LoginFrame(ctk.CTkFrame):
         if username in self.data:
             self.lbl_error.configure(text="error : Existing user !")
         else:
-            self.data[username] = password
-            self.save_last_user(username)
+            if self.check_username_lenght(username):
+                self.data[username] = password
+                self.save_last_user(username)
 
-            self.save_login_data()
-            self.on_login_success()
+                self.save_login_data()
+                self.on_login_success()
+            else:
+                self.lbl_error.configure(
+                    text="error : Username longer than 25 characters !"
+                )
