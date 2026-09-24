@@ -9,13 +9,14 @@ class LoginFrame(ctk.CTkFrame):
         super().__init__(master, **kwargs)
         self.on_login_success = on_login_success
         self.data = {}
+        self.last_user = ""
 
-        self.lbl = ctk.CTkLabel(
+        self.lbl_title = ctk.CTkLabel(
             self,
             text="Authentication",
             font=("Arial", 60, "bold"),
         )
-        self.lbl.pack(padx=30, pady=(50, 40))
+        self.lbl_title.pack(padx=30, pady=(50, 40))
 
         self.etr_username = ctk.CTkEntry(
             self,
@@ -71,18 +72,41 @@ class LoginFrame(ctk.CTkFrame):
         )
         self.lbl_error.pack(padx=25, pady=5)
 
+    def find_last_user(self):
+        try:
+            with open("source/data/last_user.txt", "r", encoding="utf-8") as fichier:
+                self.last_user = fichier.read()
+                print(type(self.last_user), " : ", self.last_user)
+        except FileNotFoundError:
+            print("Erreur : Le fichier last_user.txt est introuvable.")
+
+    def welcome_back_last_user(self):
+        self.find_last_user()
+        if self.last_user != "":
+            self.lbl_title.configure(text=f"Welcome back\n{self.last_user} !")
+            self.etr_username.insert(0, self.last_user)
+        else:
+            self.lbl_title.configure(text="Authentication")
+
+    def save_last_user(self, new_user):
+        try:
+            with open("source/data/last_user.txt", "w", encoding="utf-8") as fichier:
+                fichier.write(new_user)
+        except Exception as e:  # noqa: BLE001
+            print("Erreur lors de l'enregistrement du dernier utilisateur :", e)
+
     def get_login_data(self):
         try:
-            with open("source/data/login.json", "r", encoding="utf-8") as fichier:
+            with open("source/data/users.json", "r", encoding="utf-8") as fichier:
                 self.data = json.load(fichier)
         except FileNotFoundError:
-            print("Erreur : Le fichier login.json est introuvable au chemin indiqué.")
+            print("Erreur : Le fichier users.json est introuvable au chemin indiqué.")
 
     def save_login_data(self):
         try:
             Path("source/data").mkdir(exist_ok=True)
 
-            with open("source/data/login.json", "w", encoding="utf-8") as fichier:
+            with open("source/data/users.json", "w", encoding="utf-8") as fichier:
                 json.dump(self.data, fichier, indent=4)
         except Exception as e:  # noqa: BLE001
             print("Erreur lors de l'enregistrement des tâches :", e)
@@ -118,6 +142,7 @@ class LoginFrame(ctk.CTkFrame):
             self.lbl_error.configure(text="error : Existing user !")
         else:
             self.data[username] = password
+            self.save_last_user(username)
 
             self.save_login_data()
             self.on_login_success()

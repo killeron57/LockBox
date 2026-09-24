@@ -26,4 +26,5 @@ class App(ctk.CTk):
 
 if __name__ == "__main__":
     app = App()
+    app.login_frame.welcome_back_last_user()
     app.mainloop()
