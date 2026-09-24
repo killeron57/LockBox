@@ -2,6 +2,7 @@ import json
 from pathlib import Path
 
 import customtkinter as ctk
+from PIL import Image
 
 
 class LoginFrame(ctk.CTkFrame):
@@ -64,14 +65,6 @@ class LoginFrame(ctk.CTkFrame):
         )
         self.btn_sign_up.pack(padx=25, pady=5)
 
-        self.lbl_error = ctk.CTkLabel(
-            self,
-            text="",
-            text_color="red",
-            font=("Arial", 20, "bold"),
-        )
-        self.lbl_error.pack(padx=25, pady=5)
-
     def find_last_user(self):
         try:
             with open("source/data/last_user.txt", "r", encoding="utf-8") as fichier:
@@ -132,16 +125,16 @@ class LoginFrame(ctk.CTkFrame):
                 print("Connection validé ! ")
                 self.on_login_success()
             else:
-                self.lbl_error.configure(text="error : Incorrect password !")
+                self.show_error_popup("ERROR : Incorrect password !")
         else:
-            self.lbl_error.configure(text="error : Unknown user !")
+            self.show_error_popup("ERROR : Unknown user !")
 
     def sign_up(self):
         username = self.etr_username.get()
         password = self.etr_password.get()
 
         if username in self.data:
-            self.lbl_error.configure(text="error : Existing user !")
+            self.show_error_popup("ERROR : Existing user !")
         else:
             if self.check_username_lenght(username):
                 self.data[username] = password
@@ -150,6 +143,27 @@ class LoginFrame(ctk.CTkFrame):
                 self.save_login_data()
                 self.on_login_success()
             else:
-                self.lbl_error.configure(
-                    text="error : Username longer than 25 characters !"
-                )
+                self.show_error_popup("ERROR : Username longer than 25 characters !")
+
+    def show_error_popup(self, error_text):
+        popup = ctk.CTkToplevel(self)
+        popup.title("ERROR")
+
+        largeur = 325
+        hauteur = 150
+        pos_x = int((popup.winfo_screenwidth() / 2) - (largeur / 2))
+        pos_y = int((popup.winfo_screenheight() / 2) - (hauteur / 2))
+        popup.geometry(f"{largeur}x{hauteur}+{pos_x}+{pos_y}")
+        popup.grab_set()
+
+        icone_img = ctk.CTkImage(
+            light_image=Image.open("source/public/error_icon.png"), size=(20, 20)
+        )
+
+        label = ctk.CTkLabel(
+            popup, text=f"  {error_text}", image=icone_img, compound="left"
+        )
+        label.pack(pady=30)
+
+        bouton = ctk.CTkButton(popup, text="OK", command=popup.destroy)
+        bouton.pack()
