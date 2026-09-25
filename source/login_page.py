@@ -14,7 +14,7 @@ class LoginFrame(ctk.CTkFrame):
 
         self.lbl_title = ctk.CTkLabel(
             self,
-            text="Authentication",
+            text="",
             font=("Arial", 60, "bold"),
         )
         self.lbl_title.pack(padx=30, pady=(50, 40))
@@ -65,14 +65,14 @@ class LoginFrame(ctk.CTkFrame):
         )
         self.btn_sign_up.pack(padx=25, pady=(5, 40))
 
-    def find_last_user(self):
+    def find_last_user(self) -> None:
         try:
             with open("source/data/last_user.txt", "r", encoding="utf-8") as fichier:
                 self.last_user = fichier.read()
         except FileNotFoundError:
             print("Erreur : Le fichier last_user.txt est introuvable.")
 
-    def welcome_back_last_user(self):
+    def welcome_back_last_user(self) -> None:
         self.find_last_user()
         if self.last_user != "":
             self.lbl_title.configure(text=f"Welcome back\n{self.last_user} !")
@@ -80,24 +80,24 @@ class LoginFrame(ctk.CTkFrame):
         else:
             self.lbl_title.configure(text="Authentication")
 
-    def save_last_user(self, new_user):
+    def save_last_user(self, new_user: str) -> None:
         try:
             with open("source/data/last_user.txt", "w", encoding="utf-8") as fichier:
                 fichier.write(new_user)
         except Exception as e:  # noqa: BLE001
             print("Erreur lors de l'enregistrement du dernier utilisateur :", e)
 
-    def check_username_lenght(self, username):
+    def check_username_lenght(self, username: str) -> bool:
         return not len(username) > 25
 
-    def get_login_data(self):
+    def get_login_data(self) -> None:
         try:
             with open("source/data/users.json", "r", encoding="utf-8") as fichier:
                 self.data = json.load(fichier)
         except FileNotFoundError:
             print("Erreur : Le fichier users.json est introuvable au chemin indiqué.")
 
-    def save_login_data(self):
+    def save_login_data(self) -> None:
         try:
             Path("source/data").mkdir(exist_ok=True)
 
@@ -106,7 +106,7 @@ class LoginFrame(ctk.CTkFrame):
         except Exception as e:  # noqa: BLE001
             print("Erreur lors de l'enregistrement des tâches :", e)
 
-    def show_hide_password(self):
+    def show_hide_password(self) -> None:
         if self.checkbox_show_password.get() == 1:
             self.etr_password.configure(show="")
             self.checkbox_show_password.configure(text="Hide password")
@@ -114,7 +114,7 @@ class LoginFrame(ctk.CTkFrame):
             self.etr_password.configure(show="*")
             self.checkbox_show_password.configure(text="Show password")
 
-    def login(self):
+    def login(self) -> None:
         username = self.etr_username.get()
         password = self.etr_password.get()
 
@@ -129,7 +129,7 @@ class LoginFrame(ctk.CTkFrame):
         else:
             self.show_error_popup("ERROR : Unknown user !")
 
-    def sign_up(self):
+    def sign_up(self) -> None:
         username = self.etr_username.get()
         password = self.etr_password.get()
 
@@ -145,7 +145,7 @@ class LoginFrame(ctk.CTkFrame):
             else:
                 self.show_error_popup("ERROR : Username longer than 25 characters !")
 
-    def show_error_popup(self, error_text):
+    def show_error_popup(self, error_text: str) -> None:
         popup = ctk.CTkToplevel(self)
         popup.title("ERROR")
 
