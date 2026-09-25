@@ -63,7 +63,7 @@ class LoginFrame(ctk.CTkFrame):
             width=200,
             height=40,
         )
-        self.btn_sign_up.pack(padx=25, pady=5)
+        self.btn_sign_up.pack(padx=25, pady=(5, 40))
 
     def find_last_user(self):
         try:
